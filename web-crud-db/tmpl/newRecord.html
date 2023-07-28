@@ -1,0 +1,29 @@
+<html>
+
+<head>
+	<title>Web App - CRUD</title>
+</head>
+
+<body>
+	<div>
+		<h1>New record</h1>
+	</div>
+	<div>
+		<form action="/record/save/" method="POST">
+			<div>
+				<label for="ltitle">Title</label>
+				<input type="text" id="ltitle" name="title">
+			</div>
+			<div>
+				<label for="ldescription">Description</label>
+				<textarea name="description" rows="20" cols="80"></textarea>
+			</div>
+			<div>
+				<input type="submit" value="Save">
+				<a href="/records">Cancel</a>
+			</div>
+		</form>
+	</div>
+</body>
+
+</html>

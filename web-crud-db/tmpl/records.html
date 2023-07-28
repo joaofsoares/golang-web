@@ -1,0 +1,41 @@
+<html>
+
+<head>
+	<title>Web App - CRUD</title>
+</head>
+
+<body>
+	<div>
+		<a href="/">Home</a>
+	</div>
+	<div>
+		<h1>Records</h1>
+	</div>
+
+	<div>
+		<table>
+			<tr>
+				<th>Id</th>
+				<th>Title</th>
+				<th>Description</th>
+				<th>Action</th>
+			</tr>
+
+			{{ range $r := .Records }}
+			<tr>
+				<td>{{ $r.ID }}</td>
+				<td>{{ $r.Title }}</td>
+				<td>{{ $r.Description }}</td>
+				<td>
+					<a href="/record/edit/{{ $r.ID }}">Edit</a>
+					<a href="/record/delete/{{ $r.ID }}">Delete</a>
+				</td>
+			</tr>
+			{{ end }}
+		</table>
+		<a href="/record/new/">New</a>
+	</div>
+
+</body>
+
+</html>

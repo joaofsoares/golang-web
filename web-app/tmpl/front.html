@@ -1,0 +1,18 @@
+<html>
+
+<head>
+	<link rel="stylesheet" href="/css/front.css">
+</head>
+
+<body>
+	<h1>Front Page</h1>
+
+	<div>
+		{{ range .Titles }}
+		<li>[<a href="/view/{{ . }}">{{ . }}</a>]</li>
+		{{ end }}
+	</div>
+
+</body>
+
+</html>

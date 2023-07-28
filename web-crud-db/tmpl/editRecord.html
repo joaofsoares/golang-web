@@ -1,0 +1,25 @@
+<html>
+
+<head>
+	<title>Web App - CRUD</title>
+</head>
+
+<body>
+	<h1>Editing</h1>
+
+	<form action="/record/save/{{ .ID }}" method="POST">
+		<div>
+			<input type="text" name="title" value="{{.Title}}">
+		</div>
+		<div>
+			<textarea name="description" rows="20" cols="80">{{printf "%s" .Description}}</textarea>
+		</div>
+		<div>
+			<input type="submit" value="Save">
+			<a href="/records">Cancel</a>
+		</div>
+	</form>
+
+</body>
+
+</html>
