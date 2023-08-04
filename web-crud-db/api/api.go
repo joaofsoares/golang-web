@@ -68,11 +68,19 @@ func NewRecord(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	newRecord, err := db.InsertRecord(rec.Title, rec.Description)
+	insertedRecord, err := db.InsertRecord(rec.Title, rec.Description)
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
+	}
+
+	newRecord := struct {
+		Title       string `json:"title"`
+		Description string `json:"description"`
+	}{
+		Title:       insertedRecord.Title,
+		Description: insertedRecord.Description,
 	}
 
 	json.NewEncoder(w).Encode(newRecord)

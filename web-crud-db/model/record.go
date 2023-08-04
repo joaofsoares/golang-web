@@ -6,11 +6,6 @@ type Record struct {
 	Description string `json:"description"`
 }
 
-type RecordInsert struct {
-	Title       string `json:"title"`
-	Description string `json:"description"`
-}
-
 type Records struct {
 	Records []Record
 }

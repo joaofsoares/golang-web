@@ -73,7 +73,7 @@ func GetRecordById(id int) (*model.Record, error) {
 	return &record, nil
 }
 
-func InsertRecord(title string, description string) (*model.RecordInsert, error) {
+func InsertRecord(title string, description string) (*model.Record, error) {
 	if conn == nil {
 		conn = createConnection()
 	}
@@ -86,7 +86,7 @@ func InsertRecord(title string, description string) (*model.RecordInsert, error)
 
 	defer inserted.Close()
 
-	return &model.RecordInsert{Title: title, Description: description}, nil
+	return &model.Record{Title: title, Description: description}, nil
 }
 
 func UpdateRecord(id int, title string, description string) (*model.Record, error) {
