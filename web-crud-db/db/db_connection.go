@@ -2,22 +2,23 @@ package db
 
 import (
 	"database/sql"
+	"github.com/Valgard/godotenv"
 	"github.com/go-sql-driver/mysql"
 	"log"
+	"os"
 	"web-crud-db/model"
-	"web-crud-db/util"
 )
 
 func loadProperties() model.DbConfig {
 
-	properties := util.ReadFile("resources/config.properties")
+	godotenv.Load(".env")
 
 	return model.DbConfig{
-		User:    properties["db-user"],
-		Pass:    properties["db-passwd"],
-		Net:     properties["db-net"],
-		Address: properties["db-address"],
-		DbName:  properties["db-schema"],
+		User:    os.Getenv("DB_USER"),
+		Pass:    os.Getenv("DB_PASS"),
+		Net:     os.Getenv("DB_NET"),
+		Address: os.Getenv("DB_ADDRESS"),
+		DbName:  os.Getenv("DB_SCHEMA"),
 	}
 }
 
