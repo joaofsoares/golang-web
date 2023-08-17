@@ -2,36 +2,23 @@ package db
 
 import (
 	"database/sql"
-	"github.com/Valgard/godotenv"
-	"github.com/go-sql-driver/mysql"
 	"log"
 	"os"
-	"web-crud-db/model"
+
+	"github.com/Valgard/godotenv"
+	"github.com/go-sql-driver/mysql"
 )
-
-func loadProperties() model.DbConfig {
-
-	godotenv.Load(".env")
-
-	return model.DbConfig{
-		User:    os.Getenv("DB_USER"),
-		Pass:    os.Getenv("DB_PASS"),
-		Net:     os.Getenv("DB_NET"),
-		Address: os.Getenv("DB_ADDRESS"),
-		DbName:  os.Getenv("DB_SCHEMA"),
-	}
-}
 
 func createConfig() mysql.Config {
 
-	dbConfig := loadProperties()
+	godotenv.Load(".env")
 
 	return mysql.Config{
-		User:   dbConfig.User,
-		Passwd: dbConfig.Pass,
-		Net:    dbConfig.Net,
-		Addr:   dbConfig.Address,
-		DBName: dbConfig.DbName,
+		User:   os.Getenv("DB_USER"),
+		Passwd: os.Getenv("DB_PASS"),
+		Net:    os.Getenv("DB_NET"),
+		Addr:   os.Getenv("DB_ADDRESS"),
+		DBName: os.Getenv("DB_SCHEMA"),
 	}
 }
 

@@ -5,7 +5,6 @@ import (
 	"log"
 	"net/http"
 	"regexp"
-	"strconv"
 	"web-crud-db/db"
 )
 
@@ -16,7 +15,7 @@ var templates = template.Must(template.ParseFiles(
 	"tmpl/editRecord.html",
 ))
 
-var validPath = regexp.MustCompile("^/record/(edit|save|delete)/([0-9]+)$")
+var validPath = regexp.MustCompile("^/record/(edit|save|delete)/([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})$")
 
 func RenderHome(w http.ResponseWriter, r *http.Request) {
 	templates.ExecuteTemplate(w, "home.html", nil)
@@ -37,13 +36,8 @@ func RenderRecords(w http.ResponseWriter, r *http.Request) {
 func RenderEditRecord(w http.ResponseWriter, r *http.Request) {
 
 	path := validPath.FindStringSubmatch(r.URL.Path)
-	id, err := strconv.Atoi(path[2])
 
-	if err != nil {
-		http.Redirect(w, r, "/records/", http.StatusFound)
-	}
-
-	record, err := db.GetRecordById(id)
+	record, err := db.GetRecordById(path[2])
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -61,15 +55,10 @@ func SaveRecord(w http.ResponseWriter, r *http.Request) {
 	path := validPath.FindStringSubmatch(r.URL.Path)
 
 	if path != nil {
-		id, err := strconv.Atoi(path[2])
 		title := r.FormValue("title")
 		description := r.FormValue("description")
 
-		if err != nil {
-			http.Redirect(w, r, "/records/", http.StatusFound)
-		}
-
-		updated, err := db.UpdateRecord(id, title, description)
+		updated, err := db.UpdateRecord(path[2], title, description)
 
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -77,7 +66,7 @@ func SaveRecord(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if updated != nil {
-			log.Printf("Record Id = %d updated successfully", id)
+			log.Printf("Record Id = %s updated successfully", path[2])
 		}
 	} else {
 		title := r.FormValue("title")
@@ -100,13 +89,8 @@ func SaveRecord(w http.ResponseWriter, r *http.Request) {
 
 func DeleteRecord(w http.ResponseWriter, r *http.Request) {
 	path := validPath.FindStringSubmatch(r.URL.Path)
-	id, err := strconv.Atoi(path[2])
 
-	if err != nil {
-		http.Redirect(w, r, "/records/", http.StatusFound)
-	}
-
-	deleted, err := db.DeleteRecord(id)
+	deleted, err := db.DeleteRecord(path[2])
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -114,7 +98,7 @@ func DeleteRecord(w http.ResponseWriter, r *http.Request) {
 	}
 
 	if deleted {
-		log.Printf("Record Id = %d deleted successfully", id)
+		log.Printf("Record Id = %s deleted successfully", path[2])
 	}
 
 	http.Redirect(w, r, "/records/", http.StatusFound)

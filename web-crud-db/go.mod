@@ -1,6 +1,6 @@
 module web-crud-db
 
-go 1.20
+go 1.21.0
 
 require (
 	github.com/Valgard/godotenv v0.0.0-20200511222744-8873b92a09c5

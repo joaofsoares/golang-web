@@ -2,9 +2,9 @@ package api
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"regexp"
-	"strconv"
 	"web-crud-db/db"
 	"web-crud-db/model"
 )
@@ -37,14 +37,10 @@ func RetrieveRecord(w http.ResponseWriter, r *http.Request) {
 	}
 
 	path := recordPath.FindStringSubmatch(r.URL.Path)
-	id, err := strconv.Atoi(path[1])
 
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	log.Println("PATH =", path)
 
-	record, err := db.GetRecordById(id)
+	record, err := db.GetRecordById(path[1])
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -120,14 +116,7 @@ func DeleteRecord(w http.ResponseWriter, r *http.Request) {
 
 	path := deletePath.FindStringSubmatch(r.URL.Path)
 
-	id, err := strconv.Atoi(path[1])
-
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-
-	deleted, err := db.DeleteRecord(id)
+	deleted, err := db.DeleteRecord(path[1])
 
 	if err != nil && !deleted {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
