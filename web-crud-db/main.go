@@ -24,5 +24,7 @@ func main() {
 	http.HandleFunc("/api/record/update", api.UpdateRecord)
 	http.HandleFunc("/api/record/delete/", api.DeleteRecord)
 
+	http.HandleFunc("/api/users/", api.RetrieveAllUsers)
+
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }

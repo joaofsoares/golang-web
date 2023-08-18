@@ -1,18 +1,13 @@
 package db
 
 import (
-	"database/sql"
 	"fmt"
 	"web-crud-db/model"
 )
 
-var conn *sql.DB
-
 func GetAllRecords() (*model.Records, error) {
 
-	if conn == nil {
-		conn = createConnection()
-	}
+	createConnection()
 
 	const sql = "SELECT id,title,description FROM crud.record;"
 
@@ -31,14 +26,10 @@ func GetAllRecords() (*model.Records, error) {
 		var r model.Record
 
 		if err := rows.Scan(&r.ID, &r.Title, &r.Description); err != nil {
-			return nil, fmt.Errorf("couldnt get records from database")
+			return nil, fmt.Errorf("couldnt get records from database: %v", err)
 		}
 
 		records = append(records, r)
-	}
-
-	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("something else failed")
 	}
 
 	return &model.Records{Records: records}, nil
@@ -46,14 +37,12 @@ func GetAllRecords() (*model.Records, error) {
 
 func GetRecordById(id string) (*model.Record, error) {
 
-	if conn == nil {
-		conn = createConnection()
-	}
+	createConnection()
 
 	rows, err := conn.Query("SELECT id,title,description FROM crud.record WHERE id = ?", id)
 
 	if err != nil {
-		return nil, fmt.Errorf("couldnt select to database")
+		return nil, fmt.Errorf("couldnt select to database: %v", err)
 	}
 
 	defer rows.Close()
@@ -62,26 +51,21 @@ func GetRecordById(id string) (*model.Record, error) {
 
 	for rows.Next() {
 		if err := rows.Scan(&record.ID, &record.Title, &record.Description); err != nil {
-			return nil, fmt.Errorf("couldnt get records from database")
+			return nil, fmt.Errorf("couldnt get records from database: %v", err)
 		}
-	}
-
-	if err := rows.Err(); err != nil {
-		return nil, fmt.Errorf("something else failed")
 	}
 
 	return &record, nil
 }
 
 func InsertRecord(title string, description string) (*model.Record, error) {
-	if conn == nil {
-		conn = createConnection()
-	}
+
+	createConnection()
 
 	inserted, err := conn.Query("INSERT INTO crud.record (id, title, description) VALUES (uuid(), ?,?)", title, description)
 
 	if err != nil {
-		return nil, fmt.Errorf("coulnt insert record")
+		return nil, fmt.Errorf("coulnt insert record: %v", err)
 	}
 
 	defer inserted.Close()
@@ -90,9 +74,8 @@ func InsertRecord(title string, description string) (*model.Record, error) {
 }
 
 func UpdateRecord(id string, title string, description string) (*model.Record, error) {
-	if conn == nil {
-		conn = createConnection()
-	}
+
+	createConnection()
 
 	updated, err := conn.Query("UPDATE crud.record SET title=?, description=? WHERE id=?", title, description, id)
 
@@ -106,9 +89,8 @@ func UpdateRecord(id string, title string, description string) (*model.Record, e
 }
 
 func DeleteRecord(uuid string) (bool, error) {
-	if conn == nil {
-		conn = createConnection()
-	}
+
+	createConnection()
 
 	deleted, err := conn.Query("DELETE FROM crud.record WHERE id=?", uuid)
 

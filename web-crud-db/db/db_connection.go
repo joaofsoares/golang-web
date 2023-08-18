@@ -9,6 +9,8 @@ import (
 	"github.com/go-sql-driver/mysql"
 )
 
+var conn *sql.DB
+
 func createConfig() mysql.Config {
 
 	godotenv.Load(".env")
@@ -22,14 +24,16 @@ func createConfig() mysql.Config {
 	}
 }
 
-func createConnection() *sql.DB {
-	cfg := createConfig()
+func createConnection() {
+	if conn == nil {
+		cfg := createConfig()
 
-	db, err := sql.Open("mysql", cfg.FormatDSN())
+		db, err := sql.Open("mysql", cfg.FormatDSN()+"&parseTime=true")
 
-	if err != nil {
-		log.Fatal("DB Connection Failed")
+		if err != nil {
+			log.Fatal("DB Connection Failed")
+		}
+
+		conn = db
 	}
-
-	return db
 }

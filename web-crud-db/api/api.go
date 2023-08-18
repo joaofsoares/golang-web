@@ -15,7 +15,7 @@ var deletePath = regexp.MustCompile("^/api/record/delete/([0-9]+)$")
 func RetrieveAllRecords(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method != "GET" {
-		http.Error(w, "Method is not GET", http.StatusInternalServerError)
+		http.Error(w, "Method is not GET", http.StatusMethodNotAllowed)
 		return
 	}
 
@@ -32,7 +32,7 @@ func RetrieveAllRecords(w http.ResponseWriter, r *http.Request) {
 func RetrieveRecord(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method != "GET" {
-		http.Error(w, "Method must be GET", http.StatusInternalServerError)
+		http.Error(w, "Method must be GET", http.StatusMethodNotAllowed)
 		return
 	}
 
@@ -53,7 +53,7 @@ func RetrieveRecord(w http.ResponseWriter, r *http.Request) {
 func NewRecord(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method != "POST" {
-		http.Error(w, "Method must be POST", http.StatusInternalServerError)
+		http.Error(w, "Method must be POST", http.StatusMethodNotAllowed)
 		return
 	}
 
@@ -85,7 +85,7 @@ func NewRecord(w http.ResponseWriter, r *http.Request) {
 func UpdateRecord(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method != "PUT" {
-		http.Error(w, "Method must be PUT", http.StatusInternalServerError)
+		http.Error(w, "Method must be PUT", http.StatusMethodNotAllowed)
 		return
 	}
 
@@ -110,7 +110,7 @@ func UpdateRecord(w http.ResponseWriter, r *http.Request) {
 func DeleteRecord(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method != "DELETE" {
-		http.Error(w, "Method must be DELETE", http.StatusInternalServerError)
+		http.Error(w, "Method must be DELETE", http.StatusMethodNotAllowed)
 		return
 	}
 
@@ -123,4 +123,20 @@ func DeleteRecord(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+}
+
+func RetrieveAllUsers(w http.ResponseWriter, r *http.Request) {
+
+	if r.Method != "GET" {
+		http.Error(w, "Method must be GET", http.StatusMethodNotAllowed)
+	}
+
+	users, err := db.GetAllUsers()
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	json.NewEncoder(w).Encode(users)
 }

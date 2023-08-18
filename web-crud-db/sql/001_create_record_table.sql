@@ -7,8 +7,6 @@ CREATE TABLE record(
 	PRIMARY KEY (ID)
 );
 
-INSERT INTO record (id, title, description) VALUES (uuid(), "Title 1", "Description 1");
-
 -- +goose Down
 
 DROP TABLE record;

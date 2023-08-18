@@ -7,5 +7,5 @@ type Record struct {
 }
 
 type Records struct {
-	Records []Record
+	Records []Record `json:"records"`
 }
