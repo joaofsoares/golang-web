@@ -34,3 +34,18 @@ func GetAllUsers() (*model.Users, error) {
 
 	return &model.Users{Users: users}, nil
 }
+
+func InsertUser(userName string) error {
+
+	createConnection()
+
+	inserted, err := conn.Query("INSERT INTO crud.user (id, created_at, updated_at, name, api_key) VALUES (uuid(), now(), now(), ?, (SHA2(RANDOM_BYTES(10), 256)))", userName)
+
+	if err != nil {
+		return fmt.Errorf("coulnt insert record: %v", err)
+	}
+
+	defer inserted.Close()
+
+	return nil
+}

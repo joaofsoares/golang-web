@@ -125,18 +125,41 @@ func DeleteRecord(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func RetrieveAllUsers(w http.ResponseWriter, r *http.Request) {
+func HandleUsers(w http.ResponseWriter, r *http.Request) {
 
-	if r.Method != "GET" {
+	if r.Method != "GET" && r.Method != "POST" {
 		http.Error(w, "Method must be GET", http.StatusMethodNotAllowed)
 	}
 
-	users, err := db.GetAllUsers()
+	if r.Method == "GET" {
+		users, err := db.GetAllUsers()
 
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		json.NewEncoder(w).Encode(users)
+	} else {
+
+		type param struct {
+			Name string `json:"name"`
+		}
+
+		p := param{}
+
+		err := json.NewDecoder(r.Body).Decode(&p)
+
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+
+		err = db.InsertUser(p.Name)
+
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
 	}
-
-	json.NewEncoder(w).Encode(users)
 }
