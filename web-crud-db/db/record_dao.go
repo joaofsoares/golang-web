@@ -3,6 +3,8 @@ package db
 import (
 	"fmt"
 	"web-crud-db/model"
+
+	"github.com/google/uuid"
 )
 
 func GetAllRecords() (*model.Records, error) {
@@ -35,7 +37,7 @@ func GetAllRecords() (*model.Records, error) {
 	return &model.Records{Records: records}, nil
 }
 
-func GetRecordById(id string) (*model.Record, error) {
+func GetRecordById(id uuid.UUID) (*model.Record, error) {
 
 	createConnection()
 
@@ -73,7 +75,7 @@ func InsertRecord(title string, description string) (*model.Record, error) {
 	return &model.Record{Title: title, Description: description}, nil
 }
 
-func UpdateRecord(id string, title string, description string) (*model.Record, error) {
+func UpdateRecord(id uuid.UUID, title string, description string) (*model.Record, error) {
 
 	createConnection()
 
@@ -88,11 +90,11 @@ func UpdateRecord(id string, title string, description string) (*model.Record, e
 	return &model.Record{ID: id, Title: title, Description: description}, nil
 }
 
-func DeleteRecord(uuid string) (bool, error) {
+func DeleteRecord(uuid uuid.UUID) (bool, error) {
 
 	createConnection()
 
-	deleted, err := conn.Query("DELETE FROM crud.record WHERE id=?", uuid)
+	deleted, err := conn.Query("DELETE FROM crud.record WHERE id=?", uuid.String())
 
 	if err != nil {
 		return false, fmt.Errorf("coulnt delete record = %s", uuid)

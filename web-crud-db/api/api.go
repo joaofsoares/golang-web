@@ -2,11 +2,12 @@ package api
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
 	"regexp"
 	"web-crud-db/db"
 	"web-crud-db/model"
+
+	"github.com/google/uuid"
 )
 
 var recordPath = regexp.MustCompile("^/api/record/([0-9]+)$")
@@ -38,9 +39,7 @@ func RetrieveRecord(w http.ResponseWriter, r *http.Request) {
 
 	path := recordPath.FindStringSubmatch(r.URL.Path)
 
-	log.Println("PATH =", path)
-
-	record, err := db.GetRecordById(path[1])
+	record, err := db.GetRecordById(uuid.MustParse(path[1]))
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -116,7 +115,7 @@ func DeleteRecord(w http.ResponseWriter, r *http.Request) {
 
 	path := deletePath.FindStringSubmatch(r.URL.Path)
 
-	deleted, err := db.DeleteRecord(path[1])
+	deleted, err := db.DeleteRecord(uuid.MustParse(path[1]))
 
 	if err != nil && !deleted {
 		http.Error(w, err.Error(), http.StatusInternalServerError)

@@ -1,9 +1,11 @@
 package model
 
+import "github.com/google/uuid"
+
 type Record struct {
-	ID          string `json:"id"`
-	Title       string `json:"title"`
-	Description string `json:"description"`
+	ID          uuid.UUID `json:"id"`
+	Title       string    `json:"title"`
+	Description string    `json:"description"`
 }
 
 type Records struct {

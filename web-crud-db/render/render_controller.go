@@ -6,6 +6,8 @@ import (
 	"net/http"
 	"regexp"
 	"web-crud-db/db"
+
+	"github.com/google/uuid"
 )
 
 var templates = template.Must(template.ParseFiles(
@@ -37,7 +39,7 @@ func RenderEditRecord(w http.ResponseWriter, r *http.Request) {
 
 	path := validPath.FindStringSubmatch(r.URL.Path)
 
-	record, err := db.GetRecordById(path[2])
+	record, err := db.GetRecordById(uuid.MustParse(path[2]))
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -58,7 +60,7 @@ func SaveRecord(w http.ResponseWriter, r *http.Request) {
 		title := r.FormValue("title")
 		description := r.FormValue("description")
 
-		updated, err := db.UpdateRecord(path[2], title, description)
+		updated, err := db.UpdateRecord(uuid.MustParse(path[2]), title, description)
 
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -90,7 +92,7 @@ func SaveRecord(w http.ResponseWriter, r *http.Request) {
 func DeleteRecord(w http.ResponseWriter, r *http.Request) {
 	path := validPath.FindStringSubmatch(r.URL.Path)
 
-	deleted, err := db.DeleteRecord(path[2])
+	deleted, err := db.DeleteRecord(uuid.MustParse(path[2]))
 
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
