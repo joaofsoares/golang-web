@@ -5,15 +5,15 @@ import (
 	"log"
 	"os"
 
-	"github.com/Valgard/godotenv"
 	"github.com/go-sql-driver/mysql"
+	"web-crud-db/config"
 )
 
 var conn *sql.DB
 
 func createConfig() mysql.Config {
 
-	godotenv.Load(".env")
+	config.LoadProperties(".env")
 
 	return mysql.Config{
 		User:   os.Getenv("DB_USER"),
