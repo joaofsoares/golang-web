@@ -24,7 +24,7 @@ func createConfig() mysql.Config {
 	}
 }
 
-func createConnection() {
+func init() {
 	if conn == nil {
 		cfg := createConfig()
 

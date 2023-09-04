@@ -9,8 +9,6 @@ import (
 
 func GetAllRecords() (*model.Records, error) {
 
-	createConnection()
-
 	const sql = "SELECT id,title,description FROM crud.record;"
 
 	rows, err := conn.Query(sql)
@@ -39,8 +37,6 @@ func GetAllRecords() (*model.Records, error) {
 
 func GetRecordById(id uuid.UUID) (*model.Record, error) {
 
-	createConnection()
-
 	rows, err := conn.Query("SELECT id,title,description FROM crud.record WHERE id = ?", id)
 
 	if err != nil {
@@ -62,8 +58,6 @@ func GetRecordById(id uuid.UUID) (*model.Record, error) {
 
 func InsertRecord(title string, description string) (*model.Record, error) {
 
-	createConnection()
-
 	inserted, err := conn.Query("INSERT INTO crud.record (id, title, description) VALUES (uuid(), ?,?)", title, description)
 
 	if err != nil {
@@ -77,8 +71,6 @@ func InsertRecord(title string, description string) (*model.Record, error) {
 
 func UpdateRecord(id uuid.UUID, title string, description string) (*model.Record, error) {
 
-	createConnection()
-
 	updated, err := conn.Query("UPDATE crud.record SET title=?, description=? WHERE id=?", title, description, id)
 
 	if err != nil {
@@ -91,8 +83,6 @@ func UpdateRecord(id uuid.UUID, title string, description string) (*model.Record
 }
 
 func DeleteRecord(uuid uuid.UUID) (bool, error) {
-
-	createConnection()
 
 	deleted, err := conn.Query("DELETE FROM crud.record WHERE id=?", uuid.String())
 

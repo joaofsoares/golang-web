@@ -7,8 +7,6 @@ import (
 
 func GetAllUsers() (*model.Users, error) {
 
-	createConnection()
-
 	const sql = "SELECT id,created_at,updated_at,name FROM crud.user;"
 
 	rows, err := conn.Query(sql)
@@ -36,8 +34,6 @@ func GetAllUsers() (*model.Users, error) {
 }
 
 func InsertUser(userName string) error {
-
-	createConnection()
 
 	inserted, err := conn.Query("INSERT INTO crud.user (id, created_at, updated_at, name, api_key) VALUES (uuid(), now(), now(), ?, (SHA2(RANDOM_BYTES(10), 256)))", userName)
 
