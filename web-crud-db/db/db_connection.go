@@ -24,6 +24,12 @@ func createConfig() mysql.Config {
 	}
 }
 
+func errorHandler(err error) {
+	if err != nil {
+		log.Fatalf("Something was wrong: %v", err)
+	}
+}
+
 func init() {
 	if conn == nil {
 		cfg := createConfig()

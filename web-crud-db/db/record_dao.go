@@ -2,6 +2,7 @@ package db
 
 import (
 	"fmt"
+	"log"
 	"web-crud-db/model"
 
 	"github.com/google/uuid"
@@ -37,20 +38,12 @@ func GetAllRecords() (*model.Records, error) {
 
 func GetRecordById(id uuid.UUID) (*model.Record, error) {
 
-	rows, err := conn.Query("SELECT id,title,description FROM crud.record WHERE id = ?", id)
-
-	if err != nil {
-		return nil, fmt.Errorf("couldnt select to database: %v", err)
-	}
-
-	defer rows.Close()
+	row := conn.QueryRow("SELECT id,title,description FROM crud.record WHERE id = ?", id)
 
 	var record model.Record
 
-	for rows.Next() {
-		if err := rows.Scan(&record.ID, &record.Title, &record.Description); err != nil {
-			return nil, fmt.Errorf("couldnt get records from database: %v", err)
-		}
+	if err := row.Scan(&record.ID, &record.Title, &record.Description); err != nil {
+		return nil, fmt.Errorf("couldnt get records from database: %v", err)
 	}
 
 	return &record, nil
@@ -58,39 +51,49 @@ func GetRecordById(id uuid.UUID) (*model.Record, error) {
 
 func InsertRecord(title string, description string) (*model.Record, error) {
 
-	inserted, err := conn.Query("INSERT INTO crud.record (id, title, description) VALUES (uuid(), ?,?)", title, description)
+	stmt, err := conn.Prepare("INSERT INTO crud.record (id, title, description) VALUES (uuid(), ?,?)")
+	errorHandler(err)
+	defer stmt.Close()
 
-	if err != nil {
+	if _, err := stmt.Exec(title, description); err != nil {
 		return nil, fmt.Errorf("coulnt insert record: %v", err)
 	}
-
-	defer inserted.Close()
 
 	return &model.Record{Title: title, Description: description}, nil
 }
 
 func UpdateRecord(id uuid.UUID, title string, description string) (*model.Record, error) {
 
-	updated, err := conn.Query("UPDATE crud.record SET title=?, description=? WHERE id=?", title, description, id)
+	stmt, err := conn.Prepare("UPDATE crud.record SET title=?, description=? WHERE id=?")
+	errorHandler(err)
+	defer stmt.Close()
 
+	updated, err := stmt.Exec(title, description, id)
 	if err != nil {
 		return nil, fmt.Errorf("couldnt update record = %v", id)
 	}
 
-	defer updated.Close()
+	nRows, err := updated.RowsAffected()
+	errorHandler(err)
+	log.Printf("Record updated successfully: %v records updated", nRows)
 
 	return &model.Record{ID: id, Title: title, Description: description}, nil
 }
 
 func DeleteRecord(uuid uuid.UUID) (bool, error) {
 
-	deleted, err := conn.Query("DELETE FROM crud.record WHERE id=?", uuid.String())
+	stmt, err := conn.Prepare("DELETE FROM crud.record WHERE id=?")
+	errorHandler(err)
+	defer stmt.Close()
 
+	deleted, err := stmt.Exec(uuid.String())
 	if err != nil {
 		return false, fmt.Errorf("coulnt delete record = %s", uuid)
 	}
 
-	defer deleted.Close()
+	nRows, err := deleted.RowsAffected()
+	errorHandler(err)
+	log.Printf("Record deleted successfully: %v records deleted", nRows)
 
 	return true, nil
 }

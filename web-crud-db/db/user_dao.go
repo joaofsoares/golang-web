@@ -2,6 +2,7 @@ package db
 
 import (
 	"fmt"
+	"log"
 	"web-crud-db/model"
 )
 
@@ -10,11 +11,7 @@ func GetAllUsers() (*model.Users, error) {
 	const sql = "SELECT id,created_at,updated_at,name FROM crud.user;"
 
 	rows, err := conn.Query(sql)
-
-	if err != nil {
-		return nil, err
-	}
-
+	errorHandler(err)
 	defer rows.Close()
 
 	var users []model.User
@@ -35,13 +32,17 @@ func GetAllUsers() (*model.Users, error) {
 
 func InsertUser(userName string) error {
 
-	inserted, err := conn.Query("INSERT INTO crud.user (id, created_at, updated_at, name, api_key) VALUES (uuid(), now(), now(), ?, (SHA2(RANDOM_BYTES(10), 256)))", userName)
+	stmt, err := conn.Prepare("INSERT INTO crud.user (id, created_at, updated_at, name, api_key) VALUES (uuid(), now(), now(), ?, (SHA2(RANDOM_BYTES(10), 256)))")
+	errorHandler(err)
+	defer stmt.Close()
 
-	if err != nil {
-		return fmt.Errorf("coulnt insert record: %v", err)
-	}
+	inserted, err := stmt.Exec(userName)
+	errorHandler(err)
 
-	defer inserted.Close()
+	lastId, err := inserted.LastInsertId()
+	errorHandler(err)
+
+	log.Printf("User %v inserted with id %v", userName, lastId)
 
 	return nil
 }
